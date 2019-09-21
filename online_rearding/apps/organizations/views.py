@@ -8,14 +8,55 @@ from pure_pagination import Paginator
 from django.http import JsonResponse
 
 
-class Org_Homes(View):
+class Org_TeachersView(View):
+    """单个机构的老师列表"""
+    def get(self, request, org_id):
+
+        # 传递一个变量给前端用于判断那个标签被选中
+        status_teacher = "teacher"
+        course_orgs = CourseOrg.objects.filter(id=int(org_id))[0]
+
+        if course_orgs:
+            course_orgs.click_nums += 1
+            course_orgs.save()
+
+            all_teachers = course_orgs.teacher_set.all()
+
+            return render(request, "org-detail-teachers.html", {
+                "course_orgs": course_orgs,
+                "all_teachers": all_teachers,
+                "status_teacher": status_teacher,
+            })
+
+
+
+
+
+
+class Org_HomesView(View):
+    """单个机构首页"""
 
     def get(self, request, org_id):
 
-        return render(request, "org-detail-homepage.html")
+        # 传递一个变量给前端用于判断那个标签被选中
+        status_home = "home"
 
+        course_orgs = CourseOrg.objects.filter(id=int(org_id))[0]
+        # course_orgs = CourseOrg.objects.get(id=int(org_id))
 
+        if course_orgs:
+            course_orgs.click_nums += 1
+            course_orgs.save()
 
+            all_teachers = course_orgs.teacher_set.all()[:1]
+            all_courses = course_orgs.course_set.all()[:3]
+
+            return render(request, "org-detail-homepage.html", {
+                "course_orgs": course_orgs,
+                "all_teachers": all_teachers,
+                "all_courses": all_courses,
+                "status_home": status_home,
+            })
 
 
 class Add_Course_Ask(View):
@@ -39,7 +80,7 @@ class Add_Course_Ask(View):
 
 
 class OrgView(View):
-    """课程机构"""
+    """课程机构列表"""
     def get(self, request):
 
         # 从数据库中取出数据
@@ -48,8 +89,6 @@ class OrgView(View):
         city_all = City.objects.all()
 
         host_org = org_all.order_by("click_nums")[0:3]
-
-
 
         # 通过机构类型对课程机构进行筛选
         category = request.GET.get("ct", default='')
@@ -73,7 +112,7 @@ class OrgView(View):
 
         elif sort == "course_nums":
 
-            org_all = org_all.order_by("course_nums")
+            org_all = org_all.order_by("-course_nums")
 
         org_count = org_all.count()
 

@@ -73,6 +73,9 @@ class Teacher(BaseModel):
     def __str__(self):
         return self.name
 
+    def course_nums(self):
+        # 添加一个课程数量的属性
+        return self.course_set.all().count()
 
 
 
