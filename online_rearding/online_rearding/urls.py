@@ -47,6 +47,9 @@ urlpatterns = [
     # 机构相关页面
     url(r'^org/', include(('organizations.urls', "organizations"), namespace="org")),
 
+    # 用户相关操作
+    url(r'^ope/', include(('operations.urls', "operations"), namespace="ope")),
+
 ]
 
 

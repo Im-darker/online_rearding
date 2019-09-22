@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views.generic import View
-from utils.random_str import generate_random
+# from django.views import View
 from Share import SMS_CODE_TIME
 from online_rearding.dev import yunpian_apikey, REDIS_HOST, REDIS_PORT
 from users.form import RegistGitForm, SendSms, LoginForm, DynamicPostLogin

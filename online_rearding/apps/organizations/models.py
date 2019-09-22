@@ -51,6 +51,10 @@ class CourseOrg(BaseModel):
     def __str__(self):
         return self.name
 
+    def all_course(self):
+        """取出该机构的所有课程"""
+        return self.course_set.all()
+
 
 class Teacher(BaseModel):
     """讲师"""

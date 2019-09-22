@@ -22,11 +22,12 @@
 		<div  class="header2 header">
 
                 <div class="top">
+
 				<div class="wp">
 					<div class="fl">
                         <p>联系方式：<b>3333333333</b></p>
-
-                               {% if user.is_authenticated %}
+                    </div>
+                        {% if user.is_authenticated %}
                             <div class="personal">
                             <dl class="user fr">
                                 <dd>bobby<img class="down fr" src="{% static 'images/top_down.png' %}"/></dd>
@@ -62,8 +63,12 @@
             <div class="head fl">
                 <h1>
                     慕课网
-                    <img src="{% static 'images/authentication.png' %}"/>
-                    <img src="{% static 'images/authentication.png' %}"/>
+                    {% if course_org.is_auth %}
+                     <img src="{% static 'images/authentication.png' %}"/>
+                   {% endif %}
+                    {% if course_orgs.is_gold %}
+                      <img src="{% static 'images/gold.png' %}"/>
+                    {% endif %}
                 </h1>
                 <p class="fl">
                     <span class="fl" style="margin-top:8px;color:#848484;">推荐指数： </span>
@@ -73,7 +78,8 @@
             </div>
             <div class="btn fr collectionbtn  notlogin
                  "data-favid="22" data-fav-type="1">
-                 收藏
+                 {% if has_fav %}已收藏{% else %}收藏{% endif %}
+
             </div>
 
         </div>
@@ -96,8 +102,8 @@
 		<div class="left">
 			<ul>
 				<li class="{% ifequal status_home 'home' %}active2{% endifequal %}"><a href="{% url 'org:home' course_orgs.id %}">机构首页</a></li>
-                <li class=""><a href="org-detail-course.html">机构课程</a></li>
-                <li class=""><a href="org-detail-desc.html">机构介绍</a></li>
+                <li class="{% ifequal status_course 'course' %}active2{% endifequal %}"><a href="{% url 'org:course' course_orgs.id %}">机构课程</a></li>
+                <li class="{% ifequal status_desc 'desc' %}active2{% endifequal %}"><a href="{% url 'org:desc' course_orgs.id %}">机构介绍</a></li>
                 <li class="{% ifequal status_teacher 'teacher' %}active2{% endifequal %}"><a href="{% url 'org:teacher' course_orgs.id %}">机构讲师</a></li>
 			</ul>
 		</div>
@@ -173,11 +179,11 @@ function add_fav(current_elem, fav_id, fav_type){
     $.ajax({
         cache: false,
         type: "POST",
-        url:"/org/add_fav/",
+        url:"{% url 'ope:fav' %}",
         data:{'fav_id':fav_id, 'fav_type':fav_type},
         async: true,
         beforeSend:function(xhr, settings){
-            xhr.setRequestHeader("X-CSRFToken", "5I2SlleZJOMUX9QbwYLUIAOshdrdpRcy");
+            xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
         },
         success: function(data) {
             if(data.status == 'fail'){
@@ -196,7 +202,7 @@ function add_fav(current_elem, fav_id, fav_type){
 
 $(document).ready(function() {
     $('.collectionbtn').on('click', function(){
-        add_fav($(this), 1, 2);
+        add_fav($(this), {{ course_orgs.id }}, 2);
     });
 });
 $(function(){
